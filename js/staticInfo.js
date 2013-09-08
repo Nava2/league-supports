@@ -44,7 +44,8 @@ SSNS.Champion.ALL = function() {
 	             new SSNS.Champion("Quinn", "Quinn"), 
 	             new SSNS.Champion("Tristana", "Tristana"), 
 	             new SSNS.Champion("Twitch", "Twitch"), 
-	             new SSNS.Champion("Urgot", "Urgot") 
+	             new SSNS.Champion("Urgot", "Urgot"),
+	             new SSNS.Champion("Varus", "Varus")
 	];
 
 	var supports = [ new SSNS.Champion("Blitzcrank", "Blitzcrank"),

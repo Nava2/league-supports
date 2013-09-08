@@ -111,6 +111,14 @@
 		$ctrlOppADC.change(updateTable);
 		$ctrlOppSupp.change(updateTable);
 		$rankedRadio.change(updateTable);
+		
+// 		<p class="wrap">This tool will help players in counter picking a 
+//         support based on the information provided. All information is
+//         pulled from <a href="http://www.championselect.net/">Champion 
+//         Select</a> and then sorted, filtered, and placed back into the 
+//         table below. The highest champion is recommended for use in the
+//         match up.</p>
+		
 	});
 </script>
 </head>
@@ -129,9 +137,9 @@
             </h2>
         </div>
 
-        <div class="container well">
+        <div class="container">
             <div class="row">
-                <div class="span6">
+                <div class="well span6">
                     <form class="form-horizontal">
                         <fieldset>
                             <div class="control-group">
@@ -176,22 +184,15 @@
                                     </label>
                                 </div>
                             </div>
+                            <div class=control-group>
+                                <div class="controls" style="float: right">
+                                    <button class="btn" id="btnReset">Reset</button>
+                                    <button class="btn" id="btnIns">Help</button>
+                                    <a class="btn" href="https://github.com/Nava2/league-supports/issues" id="btnBug">Bug?</a>
+                                </div>
+                            </div>
                         </fieldset>
                     </form>
-                </div>
-                
-                <div class="container span6" id="Instructions">
-                    <p class="wrap">This tool will help players in counter picking a 
-                    support based on the information provided. All information is
-                    pulled from <a href="http://www.championselect.net/">Champion 
-                    Select</a> and then sorted, filtered, and placed back into the 
-                    table below. The highest champion is recommended for use in the
-                    match up.</p>
-                    
-                    <div class="container pull-left">
-                        <button class="btn" id="btnReset">Reset</button>
-                        <a class="btn" href="https://github.com/Nava2/league-supports/issues" id="btnBug">Bug?</a>
-                    </div>
                 </div>
             </div>
         </div>
