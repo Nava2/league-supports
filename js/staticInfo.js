@@ -4,104 +4,66 @@
 
 window.SSNS = window.SSNS || { };
 
-SSNS.Characters = function() {
+SSNS.EXPECTED_CHAMPS = 4;
+
+/**
+ * Container class for Champion information
+ * @param selectName
+ * @param name
+ * @param imgName
+ * @returns {SSNS.Champion}
+ */
+SSNS.Champion = function(selectName, name, imgName) {
+	this.selectName = selectName;
+	this.name = name;
+	this.imgName = !imgName ? selectName : imgName;
+};
+
+SSNS.Champion.prototype.valueOf = function() {
+	return this.selectName;
+};
+
+SSNS.Champion.prototype.toString = function() {
+	var out = ["Champion{ name : \"", this.name, "\", selectName : \"",
+	           this.selectName, "\", imgName : \"", this.imgName, "\" }"];
+	return out.join("");
+};
+
+SSNS.Champion.ALL = function() {
 	var result = {};
 
-	var adcs = [ {
-			"selectName" : "Ashe",
-			"name" : "Ashe"
-		}, {
-			"selectName" : "Caitlyn",
-			"name" : "Caitlyn"
-		}, {
-			"selectName" : "Corki",
-			"name" : "Corki"
-		}, {
-			"selectName" : "Ezreal",
-			"name" : "Ezreal"
-		}, {
-			"selectName" : "Graves",
-			"name" : "Graves"
-		}, {
-			"selectName" : "Kennen",
-			"name" : "Kennen"
-		}, {
-			"selectName" : "KogMaw",
-			"name" : "Kog'Maw"
-		}, {
-			"selectName" : "Miss-Fortune",
-			"name" : "Miss Fortune"
-		}, {
-			"selectName" : "Sivir",
-			"name" : "Sivir"
-		}, {
-			"selectName" : "Quinn",
-			"name" : "Quinn"
-		}, {
-			"selectName" : "Tristana",
-			"name" : "Tristana"
-		}, {
-			"selectName" : "Twitch",
-			"name" : "Twitch"
-		}, {
-			"selectName" : "Urgot",
-			"name" : "Urgot"
-		} 
+	var adcs = [ new SSNS.Champion("Ashe", "Ashe"),
+	             new SSNS.Champion("Caitlyn", "Caitlyn"), 
+	             new SSNS.Champion("Corki", "Corki"), 
+	             new SSNS.Champion("Ezreal", "Ezreal"),
+	             new SSNS.Champion("Graves", "Graves"), 
+	             new SSNS.Champion("Kennen", "Kennen"), 
+	             new SSNS.Champion("KogMaw", "Kog'Maw"), 
+	             new SSNS.Champion("Miss-Fortune", "Miss Fortune", "MissFortune"),
+	             new SSNS.Champion("Sivir", "Sivir"),
+	             new SSNS.Champion("Quinn", "Quinn"), 
+	             new SSNS.Champion("Tristana", "Tristana"), 
+	             new SSNS.Champion("Twitch", "Twitch"), 
+	             new SSNS.Champion("Urgot", "Urgot") 
 	];
 
-	var supports = [ 
-	    {
-	    	"selectName" : "Blitzcrank",
-	    	"name" : "Blitzcrank"
-	    }, {
-			"selectName" : "FiddleSticks",
-			"name" : "FiddleSticks"
-		}, {
-			"selectName" : "Janna",
-			"name" : "Janna"
-		}, {
-			"selectName" : "Karma",
-			"name" : "Karma"
-		}, {
-			"selectName" : "Leona",
-			"name" : "Leona"
-		}, {
-			"selectName" : "Lulu",
-			"name" : "Lulu"
-		}, {
-			"selectName" : "Lux",
-			"name" : "Lux"
-		}, {
-			"selectName" : "Morgana",
-			"name" : "Morgana"
-		}, {
-			"selectName" : "Nami",
-			"name" : "Nami"
-		}, {
-			"selectName" : "Nunu",
-			"name" : "Nunu"
-		}, {
-			"selectName" : "Nidalee",
-			"name" : "Nidalee"
-		}, {
-			"selectName" : "Sona",
-			"name" : "Sona"
-		}, {
-			"selectName" : "Soraka",
-			"name" : "Soraka"
-		}, {
-			"selectName" : "Taric",
-			"name" : "Taric"
-		}, {
-			"selectName" : "Thresh",
-			"name" : "Thresh"
-		}, {
-			"selectName" : "Zilean",
-			"name" : "Zilean"
-		}, {
-			"selectName" : "Zyra",
-			"name" : "Zyra"
-		} 
+	var supports = [ new SSNS.Champion("Blitzcrank", "Blitzcrank"),
+	                 new SSNS.Champion("Fiddlesticks", "FiddleSticks", "FiddleSticks"),
+	                 new SSNS.Champion("Janna", "Janna"), 
+	                 new SSNS.Champion("Karma", "Karma"), 
+	                 new SSNS.Champion("Leona", "Leona"), 
+	                 new SSNS.Champion("Lulu", "Lulu"), 
+	                 new SSNS.Champion("Lux", "Lux"), 
+	                 new SSNS.Champion("Morgana", "Morgana"), 
+	                 new SSNS.Champion("Nami", "Nami"), 
+	                 new SSNS.Champion("Nunu", "Nunu"), 
+	                 new SSNS.Champion("Nidalee", "Nidalee"), 
+	                 new SSNS.Champion("Sona", "Sona"), 
+	                 new SSNS.Champion("Soraka", "Soraka"), 
+	                 new SSNS.Champion("Taric", "Taric"), 
+	                 new SSNS.Champion("Thresh", "Thresh"),
+	                 new SSNS.Champion("Zilean", "Zilean"), 
+	                 new SSNS.Champion("Zyra", "Zyra") 
 	];
 
 	result["adcs"] = adcs;

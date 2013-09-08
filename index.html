@@ -1,301 +1,232 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script
+    src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="js/binary-search.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
-<script src="staticInfo.js"></script>
-<script src="fetch.js"></script>
+<script src="js/staticInfo.js"></script>
+<script src="js/table.js"></script>
+<script src="js/fetch.js"></script>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Bootstrap -->
 <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-<link href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.min.css" rel="stylesheet">
 
 <title>Support Suggester</title>
 
 <script>
-    	window.SSNS = window.SSNS || { };
-    	
-    	$(document).ready(function() {
-    		
-    		var EXPECTED_CHAMPS = 4;
-    		
-    		// constants:
-    		var CHAMPIONS = SSNS.Characters();
-    		var ADCS = CHAMPIONS.adcs;
-    		var SUPPORTS = CHAMPIONS.supports;
-    		var SEARCH_AREAS = SSNS.searchAreas();
-    		
-    		var $ctrlADC = $("#selectADC");
-    		var $ctrlOppADC = $("#selectOppADC"); 
-    		$.each(ADCS, function() {
-    			$ctrlADC.append($("<option></option>").attr("value", this.selectName).text(this.name));
-    			$ctrlOppADC.append($("<option></option>").attr("value", this.selectName).text(this.name));
-    		});
-    		
-    		var $ctrlOppSupp = $("#selectOppSupp");
-    		$.each(SUPPORTS, function() {
-    			var opt = $("<option></option>").attr("value", this.selectName).text(this.name);
-    			$ctrlOppSupp.append(opt);
-    		});
-    		
-    		var $resultTable = $("#results");
-    		
-    		var updateTable = function() {
-    			var createRow = function(points, name, imgLoc, linkLoc) {
-        			var row = document.createElement("div");
-        			row.className = "row-fluid well-small";
-        			
-        			var link = document.createElement("a");
-                    link.setAttribute("href", linkLoc);
-                    $(link).append("Champion Select Link");
-        			
-        			var pointsEntr = document.createElement("div");
-        			pointsEntr.className = "span1";
-        			var pictureEntr = document.createElement("div");
-        			pictureEntr.className = "span2";
-        			var nameEntr = document.createElement("div");
-        			nameEntr.className = "span3";
-        			
-        			$.each([pictureEntr, nameEntr], function() {
-        				$(link).append(this);
-        			});
-        			
-        			$(pointsEntr).append("<p>" + points + "</p>");
-        			$(nameEntr).append("<p>" + name + "</p>");
-        			
-        			var picture = document.createElement("img");
-        			picture.setAttribute("src", imgLoc);
-        			picture.setAttribute("alt-text", name);
-        			picture.setAttribute("style", "width: 50px; height: 50px");
-        			picture.className = "media-object";
-        			$(pictureEntr).append(picture);
-        			
-        			$(row).append(pointsEntr);
-        			$(row).append(link);
-        			
-        			return row;
-        		}
-    			
-    			$resultTable.hide();
-    			var modalNeeded = true;
-    			
-    			// read in the information from the table..
-    			
-    			var ourADC = $ctrlADC.val();
-    			var ourADCInfo = null;
-    			
-    			var oppADC = $ctrlOppADC.val();
-    			var oppADCInfo = null;
-    			
-    			for (var i = 0; i < ADCS.length && 
-    					(ourADCInfo == null || oppADCInfo == null); ++i) {
-    				var curr = ADCS[i];
-    				if (curr.selectName === ourADC) {
-    					ourADCInfo = curr;
-    				}
-    				
-    				if (curr.selectName === oppADC) {
-    					oppADCInfo = curr;
-    				}
-    			}
-    			
-    			var oppSupp = $ctrlOppSupp.val();
-    			var oppSuppInfo = null;
-    			for (var i = 0; i < SUPPORTS.length && oppSuppInfo == null; ++i) {
-					var curr = SUPPORTS[i];
-					if (curr.selectName === oppSupp) {
-						oppSuppInfo = curr;
-					}
-    			}
-    			
-    			var supportValues = { };
-    			for (var i = 0; i < SUPPORTS.length; ++i ) {
-    				supportValues[SUPPORTS[i].name] = 0.0;
-    			}
-    			
-    			supportValues.inc = function(champ, value) {
-    				if (supportValues[champ] !== null) {
-    					supportValues[champ] += value;
-    				}
-    			};
-    			
-    			supportValues.dec = function(champ, value) {
-    				if (supportValues[champ] !== null) {
-    					supportValues[champ] -= value;
-    				}
-    			};
-    			
-    			var updateSupports = function(champs) {
-    				var len = champs.length;
-    				len = Math.min(EXPECTED_CHAMPS, len);
-    				var value = EXPECTED_CHAMPS;
-    				
-    				for (var i = 0; i < len; ++i) {
-    			  		var supp = champs[i];
-        				console.log("Champ: " + supp.content 
-        						+ " : link=" + supp.href);
-        				
-        				supportValues.inc(supp.content, value--);
-        			}
-    			};
-    			
-    			setTimeout(function() {
-                    if (modalNeeded) {
-                        $('#myModal').modal("show");
-                    }
-                }, 1000);
-    			
-    			// call 3 async grabs of info, update when we are done
-    			$.when(SSNS.getInformation(oppADCInfo, SEARCH_AREAS.counter, function(result) {
-                       var counterSupportsRAW = SSNS.filterOnlySupports(result);
-                       
-                       updateSupports(counterSupportsRAW);
-                }), SSNS.getInformation(oppSuppInfo, SEARCH_AREAS.counter, function(result) {
-						var counterSupportsRAW = SSNS.filterOnlySupports(result);
-	        			
-	    				updateSupports(counterSupportsRAW);
-    			}), SSNS.getInformation(ourADCInfo, SEARCH_AREAS.supports, function(result) {
-                        var counterSupportsRAW = SSNS.filterOnlySupports(result);
-                        
-                        updateSupports(counterSupportsRAW);
-                })).done(function() {
-						var suppArray = [];
-		    			for (var i = 0; i < SUPPORTS.length; ++i) {
-		    				var value = supportValues[SUPPORTS[i].name];
-		    				if (value <= 0) {
-		    					continue;
-		    				}
-		    				
-		    				suppArray.push({
-		    					"name" : SUPPORTS[i].name, 
-		    					"value" : value,
-		    					"url" : "http://www.championselect.net/champ/" + SUPPORTS[i].selectName,
-		    					"image" : "http://ddragon.leagueoflegends.com/cdn/3.10.3/img/champion/" + SUPPORTS[i].selectName + ".png"
-		    				});
-		    			}
-		    			
-		    			// sort highest first
-		    			suppArray.sort(function(l, r) {
-		    				return r.value - l.value;
-		    			});
-		    			
-		    			$resultTable.empty();
-		    			
-		    			var ind = 1;
-		    			$.each(suppArray, function() {
-							var row = createRow(this.value, this.name, 
-									this.image, this.url);
-							ind = (ind + 1 ) % 2;
-							if (ind === 0) {
-								$(row).css("background-color", "rgb(238, 238, 238)");
-							}
-							
-							$resultTable.append(row);
-						});
-		    			
-		    			modalNeeded = false;
-		    			$('#myModal').modal("hide");
-		    			$resultTable.show();
+	window.SSNS = window.SSNS || {};
+
+	$(document).ready(function() {
+		// constants:
+		var CHAMPIONS = SSNS.Champion.ALL();
+		var ADCS = CHAMPIONS.adcs;
+		var SUPPORTS = CHAMPIONS.supports;
+		var SEARCH_AREAS = SSNS.searchAreas();
+
+		var $ctrlADC = $("#selectADC");
+		var $ctrlOppADC = $("#selectOppADC");
+		$.each(ADCS, function() {
+			$ctrlADC.append($("<option></option>").attr(
+					"value", this.selectName).text(this.name));
+			$ctrlOppADC.append($("<option></option>").attr(
+					"value", this.selectName).text(this.name));
+		});
+
+		var $ctrlOppSupp = $("#selectOppSupp");
+		$.each(SUPPORTS, function() {
+			var opt = $("<option></option>").attr("value",
+					this.selectName).text(this.name);
+			$ctrlOppSupp.append(opt);
+		});
+
+		var $resultTable = $("#results");
+		var $rankedRadio = $("input:radio[name='ranked-check']");
+
+		var updateTable = function() {
+			$resultTable.hide(300);
+			var modalNeeded = true;
+
+			// set a timeout to show the loading dialog, using 800 msec right 
+			// now because if its longer than that it's noticable
+			setTimeout(function() {
+				if (modalNeeded) {
+					$('#myModal').modal("show");
+				}
+			}, 800);
+
+			var filterSame = function(name) {
+				return function(results) {
+					var out = [];
+
+					$.each(results, function() {
+						if (this.content !== name) {
+							out.push(this);
+						}
+					});
+
+					return out;
+				};
+			}
+
+			var values = {
+				ourADC : $ctrlADC.val(),
+				oppADC : $ctrlOppADC.val(),
+				oppSupp : $ctrlOppSupp.val()
+			};
+
+			var filters = {
+				ourADC : [ SSNS.filterOnlySupports ],
+				oppADC : [ SSNS.filterOnlySupports ],
+				oppSupp : [ SSNS.filterOnlySupports ]
+			};
+
+			var $rankedRadio = $("input:radio[name='ranked-check']:checked");
+
+			if ($rankedRadio.val() === "ranked") {
+				var keys = Object.keys(filters);
+				$.each(keys, function() {
+					filters[this].push(filterSame(values[this]));
 				});
-    		}
-    		
-    		$ctrlADC.change(updateTable);
-    		$ctrlOppADC.change(updateTable);
-    		$ctrlOppSupp.change(updateTable);
-    	});
-    </script>
+			}
+
+			// read in the information for the table..
+			SSNS.fetchRequiredData($.extend(values, {filters : filters }), 
+					function(rows) {
+        				// insert the rows into the table
+        				$resultTable.empty();
+        				$.each(rows, function() {
+        					$resultTable.append(this);
+        				});
+        
+        				modalNeeded = false;
+        				$('#myModal').modal("hide");
+        				$resultTable.show(300);
+        			});
+		}
+
+		$ctrlADC.change(updateTable);
+		$ctrlOppADC.change(updateTable);
+		$ctrlOppSupp.change(updateTable);
+		$rankedRadio.change(updateTable);
+	});
+</script>
 </head>
 <body>
-    <a href="https://github.com/Nava2/league-supports">
-        <img style="position: absolute; top: 0; right: 0; border: 0;" 
-            src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" 
-            alt="Fork me on GitHub">
+    <a href="https://github.com/Nava2/league-supports"> <img
+        style="position: absolute; top: 0; right: 0; border: 0;"
+        src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"
+        alt="Fork me on GitHub">
     </a>
 
-	<div class="container-narrow">
-		<div class="page-header">
-			<h2>Support Suggester <small>By Kevin Brightwell (Nava2, xxN2)</small></h2>
-		</div>
+    <div class="container-narrow">
+        <div class="page-header">
+            <h2>
+                Support Suggester <small>By Kevin Brightwell
+                    (Nava2, xxN2)</small>
+            </h2>
+        </div>
 
         <div class="well">
-			<form class="form-horizontal">
-				<fieldset>
-					<div class="control-group">
-						<label class="control-label" for="selectADC">Your ADC</label>
-						<div class="controls">
-							<select class="champ-select" id="selectADC">
-								<option></option>
-							</select> <span class="help-inline">Select your ADC</span>
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label" for="selectOppADC">Opponents'
-							ADC</label>
-						<div class="controls">
-							<select class="champ-select" id="selectOppADC">
-								<option></option>
-							</select> <span class="help-inline">Select opponents' ADC</span>
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label" for="selectOppSupp">Opponents'
-							Support </label>
-						<div class="controls">
-							<select class="champ-select" id="selectOppSupp">
-								<option></option>
-							</select> <span class="help-inline">Select opponents' support</span>
-						</div>
-					</div>
-					<div class="control-group">
-					   <label class="control-label" for="ranked-check">Game Type</label>
-					   <div class="controls">
-					       <label class="radio inline">
-						      <input type="radio" id="ranked-check" name="ranked-check" value="ranked">Ranked
-						   </label>
-						   <label class="radio inline">
-	                           <input type="radio" id="ranked-check" name="ranked-check" value="normal">Normal
-	                       </label>
-                       </div>
-					</div>
-				</fieldset>
-			</form>
-		</div>
+            <form class="form-horizontal">
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label" for="selectADC">Your
+                            ADC</label>
+                        <div class="controls">
+                            <select class="champ-select" id="selectADC">
+                                <option></option>
+                            </select> <span class="help-inline">Select
+                                your ADC</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="selectOppADC">Opponents'
+                            ADC</label>
+                        <div class="controls">
+                            <select class="champ-select"
+                                id="selectOppADC">
+                                <option></option>
+                            </select> <span class="help-inline">Select
+                                opponents' ADC</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="selectOppSupp">Opponents'
+                            Support </label>
+                        <div class="controls">
+                            <select class="champ-select"
+                                id="selectOppSupp">
+                                <option></option>
+                            </select> <span class="help-inline">Select
+                                opponents' support</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="ranked-check">Game
+                            Type</label>
+                        <div class="controls">
+                            <label class="radio inline"> <input
+                                type="radio" id="ranked-check"
+                                name="ranked-check" value="ranked">Ranked
+                            </label> <label class="radio inline"> <input
+                                type="radio" id="ranked-check"
+                                name="ranked-check" value="normal">Normal
+                            </label>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
 
-		<div class="container-fluid well">
-			<div class="row-fluid">
-				<div class="span1">
-					<p><strong>Points</strong></p>
-				</div>
-				<div class="span2">
-					<p><strong>Picture</strong></p>
-				</div>
-				<div class="span3">
-					<p><strong>Name</strong></p>
-				</div>
-				<div class="span6">
-					<p><strong>Champion Select Link</strong></p>
-				</div>
-				<div class="row-fluid" id="resultsCont">
-					<div id="myModal" class="modal hide fade" tabindex="-1"
-						role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-							<h3 id="workingLabel">Working..</h3>
-						</div>
-						<div class="progress progress-striped active" 
-                            id="loadProgress" style="width=80%;">
-	                        <div class="bar" style="width: 100%;"></div>
-	                    </div>
-						<div class="modal-footer">
-							<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-						</div>
-					</div>
-					
-				    <div class="row-fluid" id="results"></div> 
-				</div>
-			</div>
-		</div>
-	</div>
+        <div class="container-fluid well">
+            <div class="row-fluid">
+                <div class="span1">
+                    <p>
+                        <strong>Points</strong>
+                    </p>
+                </div>
+                <div class="span2">
+                    <p>
+                        <strong>Picture</strong>
+                    </p>
+                </div>
+                <div class="span3">
+                    <p>
+                        <strong>Name</strong>
+                    </p>
+                </div>
+                <div class="span6">
+                    <p>
+                        <strong>Champion Select Link</strong>
+                    </p>
+                </div>
+                <div class="row-fluid" id="resultsCont">
+                    <div id="myModal" class="modal hide fade"
+                        tabindex="-1" role="dialog"
+                        aria-labelledby="myModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-header">
+                            <button type="button" class="close"
+                                data-dismiss="modal" aria-hidden="true">×</button>
+                            <h3 id="workingLabel">Working..</h3>
+                        </div>
+                        <div class="progress progress-striped active"
+                            id="loadProgress" style="">
+                            <div class="bar" style="width: 100%;"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn" data-dismiss="modal"
+                                aria-hidden="true">Close</button>
+                        </div>
+                    </div>
+
+                    <div class="row-fluid" id="results"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
