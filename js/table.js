@@ -5,36 +5,37 @@
 window.SSNS = window.SSNS || { };
 
 SSNS.createRow = function(points, name, imgLoc, linkLoc) {
-	var row = document.createElement("div");
-	row.className = "row-fluid well-small";
+	var row = document.createElement("tr");
 	
-	var link = document.createElement("a");
-    link.setAttribute("href", linkLoc);
-    $(link).append("Champion Select Link");
+	var baseLink = document.createElement("a");
+    baseLink.setAttribute("href", linkLoc);
 	
-	var pointsEntr = document.createElement("div");
-	pointsEntr.className = "span1";
-	var pictureEntr = document.createElement("div");
-	pictureEntr.className = "span2";
-	var nameEntr = document.createElement("div");
-	nameEntr.className = "span3";
+	var pointsEntr = document.createElement("td");
+	var pictureEntr = document.createElement("td");
+	var nameEntr = document.createElement("td");
 	
-	$.each([pictureEntr, nameEntr], function() {
-		$(link).append(this);
-	});
 	
-	$(pointsEntr).append("<p>" + points + "</p>");
-	$(nameEntr).append("<p>" + name + "</p>");
+	$(pointsEntr).append(points);
+	var nameLink = $.clone(baseLink);
+	$(nameLink).append(name);
+	$(nameEntr).append(nameLink);
 	
 	var picture = document.createElement("img");
 	picture.setAttribute("src", imgLoc);
 	picture.setAttribute("alt-text", name);
 	picture.setAttribute("style", "width: 50px; height: 50px");
 	picture.className = "media-object";
-	$(pictureEntr).append(picture);
+	var pictureLink = $.clone(baseLink);
 	
-	$(row).append(pointsEntr);
-	$(row).append(link);
+	$(pictureEntr).append($(pictureLink).append(picture));
+	
+	var linkEntr = document.createElement("td");
+	$(linkEntr).append(baseLink);
+	$.each([pointsEntr, pictureEntr, nameEntr, 
+	        $(linkEntr).append("Champion Select Link")], 
+	        function() {
+				$(row).append(this);
+	});
 	
 	return row;
 };

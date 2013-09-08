@@ -207,16 +207,10 @@ SSNS.fetchRequiredData = function(context, onComplete) {
 				return r.value - l.value;
 			});
 			
-			var ind = 1;
 			var result = [];
 			$.each(suppArray, function() {
 				var row = SSNS.createRow(this.value, this.name, 
 						this.image, this.url);
-				ind = (ind + 1 ) % 2;
-				if (ind === 0) {
-					$(row).css("background-color", "rgb(238, 238, 238)");
-				}
-				
 				result.push(row);
 			});
 			
