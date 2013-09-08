@@ -32,14 +32,17 @@ SSNS.Characters = function() {
 			"selectName" : "Miss-Fortune",
 			"name" : "Miss Fortune"
 		}, {
+			"selectName" : "Sivir",
+			"name" : "Sivir"
+		}, {
+			"selectName" : "Quinn",
+			"name" : "Quinn"
+		}, {
 			"selectName" : "Tristana",
 			"name" : "Tristana"
 		}, {
 			"selectName" : "Twitch",
 			"name" : "Twitch"
-		}, {
-			"selectName" : "Sivir",
-			"name" : "Sivir"
 		}, {
 			"selectName" : "Urgot",
 			"name" : "Urgot"
