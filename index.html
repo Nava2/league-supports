@@ -88,7 +88,7 @@
 			if ($rankedRadio.val() === "ranked") {
 				var keys = Object.keys(filters);
 				$.each(keys, function() {
-					filters[this].push(filterSame(values[this]));
+					filters[this].push(filterSame(values.oppSupp));
 				});
 			}
 
