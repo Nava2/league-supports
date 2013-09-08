@@ -54,8 +54,8 @@ SSNS.Characters = function() {
 	    	"selectName" : "Blitzcrank",
 	    	"name" : "Blitzcrank"
 	    }, {
-			"selectName" : "Fiddlesticks",
-			"name" : "Fiddlesticks"
+			"selectName" : "FiddleSticks",
+			"name" : "FiddleSticks"
 		}, {
 			"selectName" : "Janna",
 			"name" : "Janna"
